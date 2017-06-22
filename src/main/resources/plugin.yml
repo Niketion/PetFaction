@@ -1,0 +1,13 @@
+name: PetFaction
+author: Niketion
+version: 1.0
+main: github.niketion.petfaction.Main
+softdepend: [Vault]
+commands:
+  pet:
+    description: PetFaction command
+permissions:
+  petfaction.vip:
+    default: op
+  petfaction.sign:
+    default: op
