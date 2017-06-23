@@ -92,9 +92,18 @@ public class Main extends JavaPlugin {
                         if (entities instanceof Monster || entities instanceof Animals) {
                             entities.remove();
                             players.sendMessage(getFormat(getConfig().getString("pet-despawn")));
-                            for (PotionEffect effect : players.getActivePotionEffects())
-                                players.removePotionEffect(effect.getType());
+                            removePotion(players);
                         }
+    }
+
+    /**
+     * Remove all potion to player
+     *
+     * @param player - Who has the potions
+     */
+    public void removePotion(Player player) {
+        for (PotionEffect effect : player.getActivePotionEffects())
+            player.removePotionEffect(effect.getType());
     }
 
     /**

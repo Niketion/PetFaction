@@ -27,7 +27,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.potion.PotionEffect;
 
 public class ListenerPetFaction implements Listener {
     // Get instance of main
@@ -48,8 +47,7 @@ public class ListenerPetFaction implements Listener {
                         if (entities instanceof Monster || entities instanceof Animals)
                             entities.remove();
 
-            for (PotionEffect effect : event.getPlayer().getActivePotionEffects())
-                event.getPlayer().removePotionEffect(effect.getType());
+            main.removePotion(event.getPlayer());
         }
     }
     /**
@@ -113,6 +111,8 @@ public class ListenerPetFaction implements Listener {
                 event.getDrops().clear();
                 event.getEntity().getKiller().sendMessage(format(getConfig().getString("kill-pet.killer").replaceAll("%player%", player.getName())));
                 player.sendMessage(format(getConfig().getString("kill-pet.owner-pet").replaceAll("%player%", event.getEntity().getKiller().getName())));
+
+                main.removePotion(player);
 
                 main.getPetDeath().add(player.getName());
                 main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() { public void run() { main.getPetDeath().remove(player.getName()); } }, getConfig().getInt("pet-death-minutes") * 60 * 20);

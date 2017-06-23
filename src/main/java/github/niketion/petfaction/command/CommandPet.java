@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -64,8 +63,7 @@ public class CommandPet implements CommandExecutor {
                                     entities.remove();
 
                         player.sendMessage(format(getString("pet-despawn")));
-                        for (PotionEffect effect : player.getActivePotionEffects())
-                            player.removePotionEffect(effect.getType());
+                        Main.getInstance().removePotion(player);
                     }
                 return true;
             case "name":
