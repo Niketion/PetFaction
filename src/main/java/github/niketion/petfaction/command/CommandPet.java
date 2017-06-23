@@ -39,56 +39,62 @@ public class CommandPet implements CommandExecutor {
 
         switch (strings[0]) {
             case "shop":
-                if (Main.getInstance().hasPet(player)) {
-                    this.inventory = new GUI(getString("shop-name")).getInventory();
+                if (hasPermission(player, "shop"))
+                    if (Main.getInstance().hasPet(player)) {
+                        this.inventory = new GUI(getString("shop-name")).getInventory();
 
-                    player.sendMessage(format(getString("already-have-pet")));
-                    return false;
-                }
-
-                inventoryShop(player);
-                return true;
-            case "here":
-                if (Main.getInstance().hasPet(player)) {
-                    Main.getInstance().spawnPetHere(player);
-                }
-                return true;
-            case "away":
-                if (Main.getInstance().hasPet(player)) {
-                    // "Kill" pet
-                    for (World worlds : Bukkit.getServer().getWorlds())
-                        worlds.getEntities().stream().filter(entities -> entities.hasMetadata(player.getName())).forEach(Entity::remove);
-                    player.sendMessage(format(getString("pet-despawn")));
-                    for (PotionEffect effect : player.getActivePotionEffects())
-                        player.removePotionEffect(effect.getType());
-                }
-                return true;
-            case "name":
-                if (Main.getInstance().hasPet(player)) {
-                    String name = "";
-                    for (int i = 1; i != strings.length; i++)
-                        name += strings[i] + " ";
-                    if (!(name.length() > 28)) {
-                        new FilePet(player).set("name", name + getString("level-pet").replaceAll("%level%",
-                                String.valueOf(new FilePet(player).getPetConfig().getInt("level"))));
-                        Main.getInstance().spawnPetHere(player);
-                    } else {
-                        player.sendMessage(format(getString("max-char-name")));
+                        player.sendMessage(format(getString("already-have-pet")));
+                        return false;
                     }
-                }
-                return true;
-            case "change":
-                if (Main.getInstance().hasPet(player))
                     inventoryShop(player);
                 return true;
-            case "gui":
-                if (Main.getInstance().hasPet(player)) {
-                    this.inventory = new GUI(getString("gui-name")).getInventory();
-                    for (int i = 1; i < 7; i++) {
-                        inventory.setItem(i - 1, itemStackGUI(i, player));
+            case "here":
+                if (hasPermission(player, "here"))
+                    if (Main.getInstance().hasPet(player)) {
+                        Main.getInstance().spawnPetHere(player);
                     }
-                    player.openInventory(inventory);
-                }
+                return true;
+            case "away":
+                if (hasPermission(player, "away"))
+                    if (Main.getInstance().hasPet(player)) {
+                        // "Kill" pet
+                        for (World worlds : Bukkit.getServer().getWorlds())
+                            worlds.getEntities().stream().filter(entities -> entities.hasMetadata(player.getName())).forEach(Entity::remove);
+                        player.sendMessage(format(getString("pet-despawn")));
+                        for (PotionEffect effect : player.getActivePotionEffects())
+                            player.removePotionEffect(effect.getType());
+                    }
+                return true;
+            case "name":
+                if (hasPermission(player, "name"))
+                    if (Main.getInstance().hasPet(player)) {
+                        String name = "";
+                        for (int i = 1; i != strings.length; i++)
+                            name += strings[i] + " ";
+                        if (!(name.length() > 28)) {
+                            new FilePet(player).set("name", name + getString("level-pet").replaceAll("%level%",
+                                    String.valueOf(new FilePet(player).getPetConfig().getInt("level"))));
+                            Main.getInstance().spawnPetHere(player);
+                        } else {
+                            player.sendMessage(format(getString("max-char-name")));
+                        }
+                    }
+
+                return true;
+            case "change":
+                if (hasPermission(player, "change"))
+                    if (Main.getInstance().hasPet(player))
+                        inventoryShop(player);
+                return true;
+            case "gui":
+                if (hasPermission(player, "gui"))
+                    if (Main.getInstance().hasPet(player)) {
+                        this.inventory = new GUI(getString("gui-name")).getInventory();
+                        for (int i = 1; i < 7; i++) {
+                            inventory.setItem(i - 1, itemStackGUI(i, player));
+                        }
+                        player.openInventory(inventory);
+                    }
                 return true;
         }
 
@@ -108,6 +114,21 @@ public class CommandPet implements CommandExecutor {
         }
         commandSender.sendMessage(ChatColor.DARK_AQUA+"Plugin developed by "+ChatColor.AQUA+"@Niketion");
     }
+
+    /**
+     * Check if player has permission
+     *
+     * @param value - Value permission
+     * @return Boolean
+     */
+     private boolean hasPermission(Player player, String value) {
+         if (player.hasPermission("petfaction."+value)) {
+             return true;
+         } else {
+             player.sendMessage(format(getString("permission-denied")));
+             return false;
+         }
+     }
 
     /**
      * Get config.yml

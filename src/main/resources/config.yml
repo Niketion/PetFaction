@@ -11,6 +11,7 @@ arguments-not-found: '&cArguments not found...'
 vip-pet: "&eBuy vip to buy this pet!"
 already-have-pet: "&cYou already have a pet."
 have-not-pet: "&cYou haven't pet."
+permission-denied: "&cYou don't have permission"
 default-name-pet: "%player%'s pet"
 level-pet: "&f(Level: &c%level%&f)"
 hits-the-pet: "&ePlease, don't hurt me... i'm your pet :C"

@@ -75,9 +75,9 @@ public class Main extends JavaPlugin {
                 pluginManager.disablePlugin(this);
             }
         } else {
-            log(null, ChatColor.RED+"Failed to setup PetFaction", 1);
-            log(null, ChatColor.RED+"Your server version is compatible with this plugin (1.7.x-1.11.x)?", 1);
-            log(null, ChatColor.RED+"You've install depends? (Depend: "+getDescription().getSoftDepend()+")", 1);
+            log(null, ChatColor.RED+" Failed to setup PetFaction", 1);
+            log(null, ChatColor.RED+" Your server version is compatible with this plugin (1.7.x-1.12.x)?", 1);
+            log(null, ChatColor.RED+" You've install depends? (Depend: "+getDescription().getSoftDepend()+")", 1);
 
             pluginManager.disablePlugin(this);
         }
@@ -104,7 +104,7 @@ public class Main extends JavaPlugin {
      * @param messageLog - Message to be sent
      * @param type - Type of log
      */
-    public void log(Level level, String messageLog, int type) {
+    private void log(Level level, String messageLog, int type) {
         if (type == 0) {
             getLogger().log(level, messageLog);
         } else {
@@ -138,6 +138,9 @@ public class Main extends JavaPlugin {
         }
 
         switch (version) {
+            case "v1_12_R1":
+                petFollow = new PetFollow_1_12_R1();
+                break;
             case "v1_11_R1":
                 petFollow = new PetFollow_1_11_R1();
                 break;
@@ -180,15 +183,6 @@ public class Main extends JavaPlugin {
      */
     private void getPetFollow(Player player, Entity entity) {
         petFollow.petFollow(player, entity);
-    }
-
-    /**
-     * Get plugin manager of main
-     *
-     * @return PluginManger
-     */
-    public PluginManager getPluginManager() {
-        return pluginManager;
     }
 
     /**
