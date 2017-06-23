@@ -73,8 +73,7 @@ public class CommandPet implements CommandExecutor {
                         for (int i = 1; i != strings.length; i++)
                             name += strings[i] + " ";
                         if (!(name.length() > 28)) {
-                            new FilePet(player).set("name", name + getString("level-pet").replaceAll("%level%",
-                                    String.valueOf(new FilePet(player).getPetConfig().getInt("level"))));
+                            new FilePet(player).set("name", name);
                             Main.getInstance().spawnPetHere(player);
                         } else {
                             player.sendMessage(format(getString("max-char-name")));

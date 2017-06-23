@@ -219,7 +219,7 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        String namePet = new FilePet(player).getPetConfig().getString("name");
+        String namePet = new FilePet(player).getPetConfig().getString("name") + getConfig().getString("level-pet").replaceAll("%level%",new FilePet(player).getPetConfig().getString("level"));
 
         // Get pet, set character
         LivingEntity entity = (LivingEntity) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.valueOf(new FilePet(player).getPetConfig().getString("pet")));
@@ -242,10 +242,10 @@ public class Main extends JavaPlugin {
             }
         }
 
-        if (namePet != null) {
+        if (new FilePet(player).getPetConfig().getString("name") != null) {
             entity.setCustomName(getFormat(namePet));
         } else {
-            entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + getConfig().getString("level-pet").replaceAll("%level%",
+            entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + " " + getConfig().getString("level-pet").replaceAll("%level%",
                     String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
         }
         entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
