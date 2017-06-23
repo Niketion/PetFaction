@@ -245,7 +245,8 @@ public class Main extends JavaPlugin {
         if (namePet != null) {
             entity.setCustomName(getFormat(namePet));
         } else {
-            entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName())));
+            entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + getConfig().getString("level-pet").replaceAll("%level%",
+                    String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
         }
         entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
         getPetFollow(player, entity);
