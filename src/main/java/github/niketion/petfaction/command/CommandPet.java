@@ -38,15 +38,15 @@ public class CommandPet implements CommandExecutor {
 
         switch (strings[0]) {
             case "shop":
-                if (hasPermission(player, "shop"))
+                if (hasPermission(player, "shop")) {
                     if (Main.getInstance().hasPet(player)) {
-                        this.inventory = new GUI(getString("shop-name")).getInventory();
-
                         player.sendMessage(format(getString("already-have-pet")));
                         return false;
                     }
+                    this.inventory = new GUI(getString("shop-name")).getInventory();
                     inventoryShop(player);
-                return true;
+                    return true;
+                }
             case "here":
                 if (hasPermission(player, "here"))
                     if (Main.getInstance().hasPet(player)) {
