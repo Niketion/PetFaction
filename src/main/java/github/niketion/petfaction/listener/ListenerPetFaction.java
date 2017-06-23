@@ -1,5 +1,8 @@
 package github.niketion.petfaction.listener;
 
+import com.massivecraft.factions.FPlayers;
+import com.massivecraft.factions.Faction;
+import com.massivecraft.factions.struct.Rel;
 import github.niketion.petfaction.Main;
 import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.gui.GUI;
@@ -87,10 +90,29 @@ public class ListenerPetFaction implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         try {
-            assert event.getDamager() instanceof Player;
-            if (event.getEntity().hasMetadata(((Player) event.getDamager()).getName())) {
-                event.setCancelled(true);
-                ((Player) event.getDamager()).sendMessage(format(getConfig().getString("hits-the-pet")));
+            if (event.getDamager() instanceof Player) {
+                if (event.getEntity().hasMetadata(((Player) event.getDamager()).getName())) {
+                    event.setCancelled(true);
+                    ((Player) event.getDamager()).sendMessage(format(getConfig().getString("hits-the-pet")));
+                    return;
+                }
+
+                try {
+                    if (main.getFaction())
+                        for (Player players : Bukkit.getServer().getOnlinePlayers()) {
+                            Faction factionPlayers = FPlayers.i.get(players).getFaction();
+                            Faction factionDamager = FPlayers.i.get((Player) event.getDamager()).getFaction();
+                            if (event.getEntity().hasMetadata(players.getName()))
+                                if (factionDamager.getRelationWish(factionPlayers).isAtLeast(Rel.ALLY) || factionDamager.equals(factionPlayers)) {
+                                    event.setCancelled(true);
+                                    ((Player) event.getDamager()).sendMessage(format(getConfig().getString("pet-member-faction")));
+                                }
+                        }
+                } catch (NoClassDefFoundError error) {
+                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction too new, please change it with FactionsOne: www.spigotmc.org/resources/factionsone.9249/");
+                    main.getConfig().set("faction-depend", false);
+                    main.saveDefaultConfig();
+                }
             }
         } catch (Exception ignored) {}
     }

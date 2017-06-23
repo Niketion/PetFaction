@@ -1,8 +1,8 @@
 name: PetFaction
 author: Niketion
-version: 1.1
+version: 1.2
 main: github.niketion.petfaction.Main
-softdepend: [Vault]
+softdepend: [Vault, Factions]
 commands:
   pet:
     description: PetFaction command

@@ -1,5 +1,6 @@
 # Plugin developed by Niketion, License: MIT
 # Github: github.com/Niketion/PetFaction
+faction-depend: true
 list-commands:
  - '&a/pet gui &7- Open gui'
  - '&a/pet shop &7- Open shop'
@@ -14,6 +15,7 @@ have-not-pet: "&cYou haven't pet."
 permission-denied: "&cYou don't have permission"
 default-name-pet: "%player%'s pet"
 level-pet: "&f(Level: &c%level%&f)"
+pet-member-faction: "&eI'm the pet of your faction-member/ally"
 hits-the-pet: "&ePlease, don't hurt me... i'm your pet :C"
 first-color-shop: "&a"
 pet-despawn: "&eYour pet was despawned"

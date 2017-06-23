@@ -56,11 +56,28 @@ public class Main extends JavaPlugin {
     }
 
     /**
+     * Check if "Faction" plugin is enabled
+     *
+     * @return Boolean
+     */
+    public boolean getFaction() {
+        if (pluginManager.getPlugin("Factions") != null) {
+            if (getConfig().getBoolean("faction-depend"))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * The method is invoked at the time the plugin was enabled
      */
     @Override
     public void onEnable() {
         if (setupPetFollow() && setupEconomy()) {
+            if (!getFaction()) {
+                log(Level.INFO, "Factions not found.", 0);
+            }
+
             instance = this;
             log(Level.INFO, "Enabling the plugin...", 0);
 
@@ -76,7 +93,7 @@ public class Main extends JavaPlugin {
             }
         } else {
             log(null, ChatColor.RED+" Failed to setup PetFaction", 1);
-            log(null, ChatColor.RED+" Your server version is compatible with this plugin (1.7.x-1.12.x)?", 1);
+            log(null, ChatColor.RED+" Your server version is compatible with this plugin (1.7.x-1.12.x)? Version server is" +  getServer().getClass().getPackage().getName().replace(".",  ",").split(",")[3], 1);
             log(null, ChatColor.RED+" You've install depends? (Depend: "+getDescription().getSoftDepend()+")", 1);
 
             pluginManager.disablePlugin(this);
