@@ -179,7 +179,7 @@ public class CommandPet implements CommandExecutor {
         itemMeta.setDisplayName(format(getString("first-color-gui") + getString("gui."+id+".name")));
 
         if (!(localLevel > getConfig().getInt("potion-max-amplifier")-1)) {
-            itemMeta.setLore(Arrays.asList(format(getString("gui-lore").replaceAll("%levelPet%", String.valueOf(levelSeeGUI))
+            itemMeta.setLore(Arrays.asList(format(getString("gui-lore").replaceAll("%levelPet%", String.valueOf(localLevel))
                     .replaceAll("%globalLevelPet%", String.valueOf(globalLevel))
                     .replaceAll("%prize%", prize)).split("\n")));
         } else {

@@ -237,7 +237,7 @@ public class Main extends JavaPlugin {
             for(int i=2; i < 7; i ++) {
                 if (getNumber(player, i) != 0) {
                     player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(getConfig().getString("gui."+i+".type")), Integer.MAX_VALUE,
-                            new FilePet(player).getPetConfig().getInt(String.valueOf(i))));
+                            new FilePet(player).getPetConfig().getInt(String.valueOf(i)) - 1));
                 }
             }
         }
