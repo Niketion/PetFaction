@@ -59,7 +59,10 @@ public class CommandPet implements CommandExecutor {
                     if (Main.getInstance().hasPet(player)) {
                         // "Kill" pet
                         for (World worlds : Bukkit.getServer().getWorlds())
-                            worlds.getEntities().stream().filter(entities -> entities.hasMetadata(player.getName())).forEach(Entity::remove);
+                            for (Entity entities : worlds.getEntities())
+                                if (entities.hasMetadata(player.getName()))
+                                    entities.remove();
+
                         player.sendMessage(format(getString("pet-despawn")));
                         for (PotionEffect effect : player.getActivePotionEffects())
                             player.removePotionEffect(effect.getType());

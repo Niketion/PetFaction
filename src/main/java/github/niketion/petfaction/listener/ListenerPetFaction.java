@@ -108,14 +108,14 @@ public class ListenerPetFaction implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        for (Player player : Bukkit.getServer().getOnlinePlayers())
+        for (final Player player : Bukkit.getServer().getOnlinePlayers())
             if (event.getEntity().hasMetadata(player.getName())) {
                 event.getDrops().clear();
                 event.getEntity().getKiller().sendMessage(format(getConfig().getString("kill-pet.killer").replaceAll("%player%", player.getName())));
                 player.sendMessage(format(getConfig().getString("kill-pet.owner-pet").replaceAll("%player%", event.getEntity().getKiller().getName())));
 
                 main.getPetDeath().add(player.getName());
-                main.getServer().getScheduler().scheduleSyncDelayedTask(main, () -> main.getPetDeath().remove(player.getName()), getConfig().getInt("pet-death-minutes") * 60 * 20);
+                main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() { public void run() { main.getPetDeath().remove(player.getName()); } }, getConfig().getInt("pet-death-minutes") * 60 * 20);
             }
     }
 
