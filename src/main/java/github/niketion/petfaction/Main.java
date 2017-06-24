@@ -260,7 +260,7 @@ public class Main extends JavaPlugin {
             for (PotionEffect effect : player.getActivePotionEffects())
                 player.removePotionEffect(effect.getType());
 
-            for(int i=2; i < 7; i ++) {
+            for(int i=2; i < getConfig().getConfigurationSection("gui").getKeys(false).size(); i ++) {
                 if (getNumber(player, i) != 0) {
                     player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(getConfig().getString("gui."+i+".type")), getConfig().getInt("duration-potion-pet") * 60 * 20,
                             new FilePet(player).getPetConfig().getInt(String.valueOf(i)) - 1));

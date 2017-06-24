@@ -30,7 +30,6 @@ max-char-name: "&cMaximum of characters: 27"
 # "\n" To create a new line
 shop-lore: "&7Prize: &a%amount% \n&7Only-VIP: &a%boolean%"
 shop-name: "Pet shop"
-shop-rows: 1 # 1 rows = 9 slots
 not-enough-money: "&cYou don't have enough money..."
 take-money: "&a%money%$ were taken from your balance."
 shop:
@@ -72,7 +71,7 @@ shop:
 # » [Exemple code]
 #
 #  8:
-#    entity: "&aZOMBIE"
+#    entity: ZOMBIE
 #    prize: 20000
 #    data-egg: 54
 #    only-vip: false
@@ -80,7 +79,6 @@ shop:
 first-color-gui: "&c"
 gui-name: "GUI Pet"
 gui-lore: "&7Level pet: &c%levelPet%\n&7Global level pet: &c%globalLevelPet% \n&7Prize: &c%prize%"
-potion-max-amplifier: 4
 max-reached: "&cYou've reached the maximum with this kind of potion"
 gui:
   1:
@@ -148,3 +146,15 @@ gui:
       2: 25000
       3: 50000
       4: 100000
+# » [Exemple code]
+#
+#  7:
+#    name: "Saturation"
+#    type: SATURATION
+#    id: 373
+#    data: 8261
+#    level:
+#      1: 15000
+#      2: 25000
+#      3: 50000
+#      4: 100000

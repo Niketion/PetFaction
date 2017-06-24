@@ -17,9 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CommandPet implements CommandExecutor {
 
@@ -43,7 +41,7 @@ public class CommandPet implements CommandExecutor {
                     }
 
                     inventory = new GUI(getString("shop-name")).getInventory();
-                    for (int i = 1; i < Integer.valueOf(Collections.max(getConfig().getConfigurationSection("shop").getKeys(true)).replaceAll(".prize", "")) + 1; i++) {
+                    for (int i = 1; i < getConfig().getConfigurationSection("shop").getKeys(false).size() + 1; i++) {
                         inventory.setItem(i - 1, itemStackShop(i));
                     }
                     player.openInventory(inventory);
@@ -87,7 +85,7 @@ public class CommandPet implements CommandExecutor {
                 if (hasPermission(player, "change"))
                     if (Main.getInstance().hasPet(player)) {
                         inventory = new GUI(getString("shop-name")).getInventory();
-                        for (int i = 1; i < Integer.valueOf(Collections.max(getConfig().getConfigurationSection("shop").getKeys(true)).replaceAll(".prize", "")) + 1; i++) {
+                        for (int i = 1; i < getConfig().getConfigurationSection("shop").getKeys(false).size() + 1; i++) {
                             inventory.setItem(i - 1, itemStackShop(i));
                         }
                         player.openInventory(inventory);
@@ -97,7 +95,7 @@ public class CommandPet implements CommandExecutor {
                 if (hasPermission(player, "gui"))
                     if (Main.getInstance().hasPet(player)) {
                         inventory = new GUI(getString("gui-name")).getInventory();
-                        for (int i = 1; i < 7; i++) {
+                        for (int i = 1; i < getConfig().getConfigurationSection("gui").getKeys(false).size() + 1; i++) {
                             inventory.setItem(i - 1, itemStackGUI(i, player));
                         }
                         player.openInventory(inventory);
@@ -198,7 +196,7 @@ public class CommandPet implements CommandExecutor {
 
         itemMeta.setDisplayName(format(getString("first-color-gui") + getString("gui."+id+".name")));
 
-        if (!(localLevel > getConfig().getInt("potion-max-amplifier")-1)) {
+        if (!(localLevel > getConfig().getConfigurationSection("gui."+id+".level").getKeys(false).size()-1)) {
             itemMeta.setLore(Arrays.asList(format(getString("gui-lore").replaceAll("%levelPet%", String.valueOf(localLevel))
                     .replaceAll("%globalLevelPet%", String.valueOf(globalLevel))
                     .replaceAll("%prize%", prize)).split("\n")));

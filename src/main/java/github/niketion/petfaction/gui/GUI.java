@@ -16,7 +16,11 @@ public class GUI {
     private static ArrayList<String> gui = new ArrayList<>();
 
     public GUI(String name) {
-        inventory = Bukkit.createInventory(null, getConfig().getInt("shop-rows")*9, Main.getInstance().getFormat(name));
+        int shopRows = ((getConfig().getConfigurationSection("shop").getKeys(false).size()/9)+1)*9;
+        int guiRows = ((getConfig().getConfigurationSection("gui").getKeys(false).size()/9)+1)*9;
+
+        int rows = Math.max(shopRows, guiRows);
+        inventory = Bukkit.createInventory(null, rows, Main.getInstance().getFormat(name));
 
         gui.add(name);
     }

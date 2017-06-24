@@ -33,8 +33,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.List;
-
 public class ListenerPetFaction implements Listener {
     // Get instance of main
     private Main main = Main.getInstance();
@@ -225,7 +223,7 @@ public class ListenerPetFaction implements Listener {
         int levelSeeGUI = localLevel+1;
         int prize = getConfig().getInt("gui."+id+".level."+levelSeeGUI);
 
-        if (!(localLevel > getConfig().getInt("potion-max-amplifier") - 1)) {
+        if (!(localLevel > getConfig().getConfigurationSection("gui."+id+".level").getKeys(false).size() - 1)) {
             if (economy().getBalance(player) >= prize) {
                 new FilePet(player).set("level", globalLevel + 1);
                 new FilePet(player).set(String.valueOf(id), localLevel + 1);
