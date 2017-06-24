@@ -7,6 +7,8 @@ import github.niketion.petfaction.Main;
 import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.gui.GUI;
 import net.milkbowl.vault.economy.Economy;
+import net.redstoneore.legacyfactions.Relation;
+import net.redstoneore.legacyfactions.entity.FactionColl;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,6 +32,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.List;
 
 public class ListenerPetFaction implements Listener {
     // Get instance of main
@@ -99,17 +103,32 @@ public class ListenerPetFaction implements Listener {
 
                 try {
                     if (main.getFaction())
-                        for (Player players : Bukkit.getServer().getOnlinePlayers()) {
-                            Faction factionPlayers = FPlayers.i.get(players).getFaction();
-                            Faction factionDamager = FPlayers.i.get((Player) event.getDamager()).getFaction();
-                            if (event.getEntity().hasMetadata(players.getName()))
-                                if (factionDamager.getRelationWish(factionPlayers).isAtLeast(Rel.ALLY) || factionDamager.equals(factionPlayers)) {
-                                    event.setCancelled(true);
-                                    ((Player) event.getDamager()).sendMessage(format(getConfig().getString("pet-member-faction")));
+                        if (main.getServer().getPluginManager().getPlugin("Factions") != null) {
+                            for (World worlds : Bukkit.getWorlds())
+                                for (Player players : worlds.getPlayers()) {
+                                    Faction factionPlayers = FPlayers.i.get(players).getFaction();
+                                    Faction factionDamager = FPlayers.i.get((Player) event.getDamager()).getFaction();
+                                    if (event.getEntity().hasMetadata(players.getName()))
+                                        if (factionDamager.getRelationWish(factionPlayers).isAtLeast(Rel.ALLY) || factionDamager.equals(factionPlayers)) {
+                                            event.setCancelled(true);
+                                            ((Player) event.getDamager()).sendMessage(format(getConfig().getString("pet-member-faction")));
+                                        }
+                                }
+                        } else if (main.getServer().getPluginManager().getPlugin("LegacyFactions") != null) {
+                            for (World worlds : Bukkit.getWorlds())
+                                for (Player players : worlds.getPlayers()) {
+                                    net.redstoneore.legacyfactions.entity.Faction factionDamager = FactionColl.get(event.getDamager());
+                                    net.redstoneore.legacyfactions.entity.Faction factionPlayer = FactionColl.get(players);
+                                    if (event.getEntity().hasMetadata(players.getName())) {
+                                        if (factionDamager.getRelationWish(factionPlayer).equals(Relation.ALLY) || factionDamager.equals(factionPlayer)) {
+                                            event.setCancelled(true);
+                                            ((Player) event.getDamager()).sendMessage(format(getConfig().getString("pet-member-faction")));
+                                        }
+                                    }
                                 }
                         }
                 } catch (NoClassDefFoundError error) {
-                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction too new, please change it with FactionsOne: www.spigotmc.org/resources/factionsone.9249/");
+                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction too new, please change it with FactionsOne or LegacyFactions");
                     main.getConfig().set("faction-depend", false);
                     main.saveDefaultConfig();
                 }
@@ -119,26 +138,33 @@ public class ListenerPetFaction implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        for (Player player : Bukkit.getServer().getOnlinePlayers())
-            if (event.getEntity().hasMetadata(player.getName()))
-                if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-                    event.setCancelled(true);
-                }
+        for (World worlds : Bukkit.getWorlds())
+            for (Player player : worlds.getPlayers())
+                if (event.getEntity().hasMetadata(player.getName()))
+                    if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
+                        event.setCancelled(true);
+                    }
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        for (final Player player : Bukkit.getServer().getOnlinePlayers())
-            if (event.getEntity().hasMetadata(player.getName())) {
-                event.getDrops().clear();
-                event.getEntity().getKiller().sendMessage(format(getConfig().getString("kill-pet.killer").replaceAll("%player%", player.getName())));
-                player.sendMessage(format(getConfig().getString("kill-pet.owner-pet").replaceAll("%player%", event.getEntity().getKiller().getName())));
+        for (World world : Bukkit.getWorlds()) {
+            for (final Player player : world.getPlayers())
+                if (event.getEntity().hasMetadata(player.getName())) {
+                    event.getDrops().clear();
+                    event.getEntity().getKiller().sendMessage(format(getConfig().getString("kill-pet.killer").replaceAll("%player%", player.getName())));
+                    player.sendMessage(format(getConfig().getString("kill-pet.owner-pet").replaceAll("%player%", event.getEntity().getKiller().getName())));
 
-                main.removePotion(player);
+                    main.removePotion(player);
 
-                main.getPetDeath().add(player.getName());
-                main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() { public void run() { main.getPetDeath().remove(player.getName()); } }, getConfig().getInt("pet-death-minutes") * 60 * 20);
-            }
+                    main.getPetDeath().add(player.getName());
+                    main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+                        public void run() {
+                            main.getPetDeath().remove(player.getName());
+                        }
+                    }, getConfig().getInt("pet-death-minutes") * 60 * 20);
+                }
+        }
     }
 
     @EventHandler

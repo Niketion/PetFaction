@@ -13,6 +13,11 @@ public class FilePet {
     private File petFile;
     private FileConfiguration petConfig;
 
+    /**
+     * Get player's file pet
+     *
+     * @param player - Owner file pet
+     */
     public FilePet(Player player) {
         petFile = new File("plugins/PetFaction/userpet/" + player.getName() + ".yml");
         petConfig = YamlConfiguration.loadConfiguration(petFile);
@@ -29,10 +34,21 @@ public class FilePet {
         }
     }
 
+    /**
+     * Get pet-user config
+     *
+     * @return FileConfiguration
+     */
     public FileConfiguration getPetConfig() {
         return petConfig;
     }
 
+    /**
+     * Set a value and save file pet-user
+     *
+     * @param path - Path in the file
+     * @param value - Value in the file
+     */
     public void set(String path, Object value) {
         petConfig.set(path, value);
         try{

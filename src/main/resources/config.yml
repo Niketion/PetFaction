@@ -71,7 +71,7 @@ shop:
     only-vip: true
 # » [Exemple code]
 #
-#  9:
+#  8:
 #    entity: "&aZOMBIE"
 #    prize: 20000
 #    data-egg: 54

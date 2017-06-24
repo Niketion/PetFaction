@@ -19,12 +19,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class CommandPet implements CommandExecutor {
-    /**
-     * GUI inventory
-     */
-    private Inventory inventory;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -36,6 +33,7 @@ public class CommandPet implements CommandExecutor {
         assert commandSender instanceof Player;
         Player player = (Player) commandSender;
 
+        Inventory inventory;
         switch (strings[0]) {
             case "shop":
                 if (hasPermission(player, "shop")) {
@@ -43,8 +41,12 @@ public class CommandPet implements CommandExecutor {
                         player.sendMessage(format(getString("already-have-pet")));
                         return false;
                     }
-                    this.inventory = new GUI(getString("shop-name")).getInventory();
-                    inventoryShop(player);
+
+                    inventory = new GUI(getString("shop-name")).getInventory();
+                    for (int i = 1; i < Integer.valueOf(Collections.max(getConfig().getConfigurationSection("shop").getKeys(true)).replaceAll(".prize", "")) + 1; i++) {
+                        inventory.setItem(i - 1, itemStackShop(i));
+                    }
+                    player.openInventory(inventory);
                     return true;
                 }
             case "here":
@@ -83,13 +85,18 @@ public class CommandPet implements CommandExecutor {
                 return true;
             case "change":
                 if (hasPermission(player, "change"))
-                    if (Main.getInstance().hasPet(player))
-                        inventoryShop(player);
+                    if (Main.getInstance().hasPet(player)) {
+                        inventory = new GUI(getString("shop-name")).getInventory();
+                        for (int i = 1; i < Integer.valueOf(Collections.max(getConfig().getConfigurationSection("shop").getKeys(true)).replaceAll(".prize", "")) + 1; i++) {
+                            inventory.setItem(i - 1, itemStackShop(i));
+                        }
+                        player.openInventory(inventory);
+                    }
                 return true;
             case "gui":
                 if (hasPermission(player, "gui"))
                     if (Main.getInstance().hasPet(player)) {
-                        this.inventory = new GUI(getString("gui-name")).getInventory();
+                        inventory = new GUI(getString("gui-name")).getInventory();
                         for (int i = 1; i < 7; i++) {
                             inventory.setItem(i - 1, itemStackGUI(i, player));
                         }
@@ -146,16 +153,29 @@ public class CommandPet implements CommandExecutor {
      * @return ItemStack
      */
     private ItemStack itemStackShop(int id) {
-        ItemStack item = new ItemStack(Material.MONSTER_EGG, 1, (short) getConfig().getInt("shop."+id+".data-egg"));
-        ItemMeta itemMeta = item.getItemMeta();
+        String displayName = format(getString("first-color-shop") + getString("shop." + id + ".entity"));
+        List<String> lore = Arrays.asList((format(getString("shop-lore").replaceAll("%amount%", String.valueOf(getConfig().getInt("shop." + id + ".prize")))
+                .replaceAll("%boolean%", String.valueOf(getConfig().getBoolean("shop." + id + ".only-vip"))))).split("\n"));
 
-        itemMeta.setDisplayName(format(getString("first-color-shop") + getString("shop."+id+".entity")));
-        itemMeta.setLore(Arrays.asList((format(getString("shop-lore")
-                .replaceAll("%amount%", String.valueOf(getConfig().getInt("shop."+id+".prize")))
-                .replaceAll("%boolean%", String.valueOf(getConfig().getBoolean("shop."+id+".only-vip"))))).split("\n")));
+        if (Main.getInstance().getVersionServer("1.12") || Main.getInstance().getVersionServer("1.11") || Main.getInstance().getVersionServer("1.10") || Main.getInstance().getVersionServer("1.9")) {
+            ItemStack item = new ItemStack(Material.MOB_SPAWNER);
+            ItemMeta itemMeta = item.getItemMeta();
 
-        item.setItemMeta(itemMeta);
-        return item;
+            itemMeta.setDisplayName(displayName);
+            itemMeta.setLore(lore);
+
+            item.setItemMeta(itemMeta);
+            return item;
+        } else {
+            ItemStack item = new ItemStack(Material.MONSTER_EGG, 1, (short) getConfig().getInt("shop." + id + ".data-egg"));
+            ItemMeta itemMeta = item.getItemMeta();
+
+            itemMeta.setDisplayName(displayName);
+            itemMeta.setLore(lore);
+
+            item.setItemMeta(itemMeta);
+            return item;
+        }
     }
 
     /**
@@ -190,18 +210,6 @@ public class CommandPet implements CommandExecutor {
 
         item.setItemMeta(itemMeta);
         return item;
-    }
-
-    /**
-     * Inventory of shop
-     *
-     * @param player - Who open inventory
-     */
-    private void inventoryShop(Player player) {
-        for (int i = 1; i < Integer.valueOf(Collections.max(getConfig().getConfigurationSection("shop").getKeys(true)).replaceAll(".prize", "")) + 1; i++) {
-            inventory.setItem(i - 1, itemStackShop(i));
-        }
-        player.openInventory(inventory);
     }
 
     /**

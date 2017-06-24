@@ -45,12 +45,10 @@ public class Main extends JavaPlugin {
         if (pluginManager.getPlugin("Vault") == null) {
             return false;
         } else {
-
             RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
             if (economyProvider != null) {
                 economy = economyProvider.getProvider();
             }
-
             return (economy != null);
         }
     }
@@ -61,10 +59,10 @@ public class Main extends JavaPlugin {
      * @return Boolean
      */
     public boolean getFaction() {
-        if (pluginManager.getPlugin("Factions") != null) {
-            if (getConfig().getBoolean("faction-depend"))
-                return true;
-        }
+        if (getConfig().getBoolean("faction-depend"))
+            if (pluginManager.getPlugin("Factions") != null || pluginManager.getPlugin("LegacyFactions") != null)
+                if (getConfig().getBoolean("faction-depend"))
+                    return true;
         return false;
     }
 
@@ -100,10 +98,13 @@ public class Main extends JavaPlugin {
         }
     }
 
+    /**
+     * The method is invoked at the time the plugin was disabled
+     */
     @Override
     public void onDisable() {
-        for (Player players : getServer().getOnlinePlayers())
-            for (World worlds : getServer().getWorlds())
+        for (World worlds : getServer().getWorlds())
+            for (Player players : worlds.getPlayers())
                 for (Entity entities : worlds.getEntities())
                     if (entities.hasMetadata(players.getName()))
                         if (entities instanceof Monster || entities instanceof Animals) {
@@ -155,7 +156,6 @@ public class Main extends JavaPlugin {
      * @return Boolean
      */
     private boolean setupPetFollow() {
-
         String version;
         try {
             version = getServer().getClass().getPackage().getName().replace(".",  ",").split(",")[3];
@@ -218,6 +218,15 @@ public class Main extends JavaPlugin {
      */
     public Economy getEconomy() {
         return economy;
+    }
+
+    /**
+     * Get version of server
+     *
+     * @return String
+     */
+    public boolean getVersionServer(String version) {
+        return getServer().getVersion().contains(version);
     }
 
     /**
