@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
 import java.util.*;
 
 public class CommandPet implements CommandExecutor {
@@ -35,7 +36,7 @@ public class CommandPet implements CommandExecutor {
         switch (strings[0]) {
             case "shop":
                 if (hasPermission(player, "shop")) {
-                    if (Main.getInstance().hasPet(player)) {
+                    if (new File(Main.getInstance().getDataFolder() + "/userpet/"+player.getName()+".yml").exists()) {
                         player.sendMessage(format(getString("already-have-pet")));
                         return false;
                     }
@@ -187,7 +188,15 @@ public class CommandPet implements CommandExecutor {
         ItemStack item = new ItemStack(getConfig().getInt("gui."+id+".id"), 1, (short) getConfig().getInt("gui."+id+".data"));
         ItemMeta itemMeta = item.getItemMeta();
 
-        int localLevel = new FilePet(player).getPetConfig().getInt(String.valueOf(id));
+        String typePotion = getConfig().getString("gui."+id+".type");
+
+        int localLevel;
+        if (typePotion == null) {
+            localLevel = new FilePet(player).getPetConfig().getInt("hearts");
+        } else {
+            localLevel = new FilePet(player).getPetConfig().getInt("potion-pet." + typePotion);
+        }
+
         int globalLevel = new FilePet(player).getPetConfig().getInt("level");
 
         int levelSeeGUI = localLevel+1;

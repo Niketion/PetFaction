@@ -34,7 +34,7 @@ public class PetFollow_1_9_R1 implements PetFollow {
                     if (distance > 10 && !pet.isDead() && player.isOnGround()) {
                         pet.teleport(player.getLocation());
                     }
-                } catch (ClassCastException ignored) {}
+                } catch (ClassCastException | NullPointerException ignored) {}
             }
         }.runTaskTimer(Main.getInstance(), 0L, 20L);
     }

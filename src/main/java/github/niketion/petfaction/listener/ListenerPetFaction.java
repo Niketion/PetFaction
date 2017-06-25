@@ -9,10 +9,7 @@ import github.niketion.petfaction.gui.GUI;
 import net.milkbowl.vault.economy.Economy;
 import net.redstoneore.legacyfactions.Relation;
 import net.redstoneore.legacyfactions.entity.FactionColl;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -83,7 +80,13 @@ public class ListenerPetFaction implements Listener {
                         balanceExecuteShop(player, moneyShop, entityShop);
                     }
                 } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(format(getConfig().getString("first-color-gui") + potionGUI))) {
-                    balanceExecuteGUI(player, slot);
+                    String typePotion = getConfig().getString("gui."+slot+".type");
+
+                    if (typePotion == null) {
+                        balanceExecuteGUI(player, slot, "hearts");
+                    } else {
+                        balanceExecuteGUI(player, slot, "potion-pet."+typePotion);
+                    }
                 }
             }
         } catch (NullPointerException ignored) {}
@@ -125,8 +128,8 @@ public class ListenerPetFaction implements Listener {
                                     }
                                 }
                         }
-                } catch (NoClassDefFoundError error) {
-                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction too new, please change it with FactionsOne or LegacyFactions");
+                } catch (NoClassDefFoundError | NoSuchFieldError error) {
+                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction not supported, please change it with FactionsOne or LegacyFactions");
                     main.getConfig().set("faction-depend", false);
                     main.saveDefaultConfig();
                 }
@@ -216,8 +219,14 @@ public class ListenerPetFaction implements Listener {
         return Main.getInstance().getFormat(message);
     }
 
-    private void balanceExecuteGUI(Player player, int id) {
-        int localLevel = new FilePet(player).getPetConfig().getInt(String.valueOf(id));
+    /**
+     * Execute gui potion pet
+     *
+     * @param player - Owner pet
+     * @param id - Id
+     */
+    private void balanceExecuteGUI(Player player, int id, String value) {
+        int localLevel = new FilePet(player).getPetConfig().getInt(value);
         int globalLevel = new FilePet(player).getPetConfig().getInt("level");
 
         int levelSeeGUI = localLevel+1;
@@ -226,8 +235,21 @@ public class ListenerPetFaction implements Listener {
         if (!(localLevel > getConfig().getConfigurationSection("gui."+id+".level").getKeys(false).size() - 1)) {
             if (economy().getBalance(player) >= prize) {
                 new FilePet(player).set("level", globalLevel + 1);
-                new FilePet(player).set(String.valueOf(id), localLevel + 1);
+                new FilePet(player).set(value, localLevel + 1);
 
+                Location location = player.getLocation();
+                for(int i = 0; i <360; i+=5){
+                    location.setY(location.getY() + Math.cos(i)*5);
+                    location.getWorld().playEffect(location, Effect.FLAME, 51);
+                }
+                if (main.getVersionServer("1.7") || main.getVersionServer("1.8")) {
+                    location.getWorld().playSound(location, Sound.LEVEL_UP, 10, 3);
+                    location.getWorld().playSound(location, Sound.IRONGOLEM_HIT, 10, 2);
+                } else {
+                    location.getWorld().playSound(location, Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 10, 3);
+                    location.getWorld().playSound(location, Sound.valueOf("ENTITY_IRONGOLEM_HURT"), 10, 2);
+                }
+                
                 economy().withdrawPlayer(player, prize);
                 player.sendMessage(format(getConfig().getString("take-money").replaceAll("%money%", String.valueOf(prize))));
                 player.closeInventory();

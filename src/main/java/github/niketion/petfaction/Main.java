@@ -252,7 +252,7 @@ public class Main extends JavaPlugin {
         if (entity instanceof Ageable)
             ((Ageable) entity).setBaby();
 
-        double hearts = (double) getConfig().getInt("gui.1.hearts." + new FilePet(player).getPetConfig().getInt("1"))*2;
+        double hearts = (double) getConfig().getInt("gui.1.hearts." + new FilePet(player).getPetConfig().getInt("hearts"))*2;
         entity.setMaxHealth(hearts);
         entity.setHealth(hearts);
 
@@ -260,11 +260,9 @@ public class Main extends JavaPlugin {
             for (PotionEffect effect : player.getActivePotionEffects())
                 player.removePotionEffect(effect.getType());
 
-            for(int i=2; i < getConfig().getConfigurationSection("gui").getKeys(false).size(); i ++) {
-                if (getNumber(player, i) != 0) {
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(getConfig().getString("gui."+i+".type")), getConfig().getInt("duration-potion-pet") * 60 * 20,
-                            new FilePet(player).getPetConfig().getInt(String.valueOf(i)) - 1));
-                }
+            for (String strings : new FilePet(player).getPetConfig().getConfigurationSection("potion-pet").getKeys(false)) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), getConfig().getInt("duration-potion-pet") * 60 * 20,
+                        new FilePet(player).getPetConfig().getInt("potion-pet."+strings)-1));
             }
         }
 
@@ -276,10 +274,6 @@ public class Main extends JavaPlugin {
         }
         entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
         getPetFollow(player, entity);
-    }
-
-    private int getNumber(Player player, int number) {
-        return new FilePet(player).getPetConfig().getInt(String.valueOf(number));
     }
 
     /**
