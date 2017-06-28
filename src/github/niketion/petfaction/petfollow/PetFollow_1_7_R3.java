@@ -30,13 +30,13 @@ public class PetFollow_1_7_R3 implements PetFollow {
                         ((EntityInsentient) petf).getNavigation().a(path, 1.0D);
                         ((EntityInsentient) petf).getNavigation().a(2.0D);
                     }
-                    int distance = (int) Bukkit.getPlayer(player.getName()).getLocation().distance(pet.getLocation());
                     if (Bukkit.getPlayer(player.getName()).getLocation().getWorld().equals(pet.getLocation().getWorld())) {
+                        int distance = (int) Bukkit.getPlayer(player.getName()).getLocation().distance(pet.getLocation());
                         if (distance > 10 && !pet.isDead() && player.isOnGround()) {
                             pet.teleport(player.getLocation());
                         }
                     }
-                } catch (ClassCastException | NullPointerException ignored) {}
+                } catch (Exception ignored) {}
             }
         }.runTaskTimer(Main.getInstance(), 0L, 20L);
     }
