@@ -5,6 +5,7 @@ import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.listener.ListenerPetFaction;
 import github.niketion.petfaction.petfollow.*;
 import net.milkbowl.vault.economy.Economy;
+import net.minecraft.util.org.apache.commons.lang3.ObjectUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.*;
@@ -103,15 +104,17 @@ public class Main extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        for (World worlds : getServer().getWorlds())
-            for (Player players : worlds.getPlayers())
-                for (Entity entities : worlds.getEntities())
-                    if (entities.hasMetadata(players.getName()))
-                        if (entities instanceof Monster || entities instanceof Animals) {
-                            entities.remove();
-                            players.sendMessage(getFormat(getConfig().getString("pet-despawn")));
-                            removePotion(players);
-                        }
+        try {
+            for (World worlds : getServer().getWorlds())
+                for (Player players : worlds.getPlayers())
+                    for (Entity entities : worlds.getEntities())
+                        if (entities.hasMetadata(players.getName()))
+                            if (entities instanceof Monster || entities instanceof Animals) {
+                                entities.remove();
+                                players.sendMessage(getFormat(getConfig().getString("pet-despawn")));
+                                removePotion(players);
+                            }
+        } catch (NullPointerException ignored) {}
     }
 
     /**
@@ -235,45 +238,49 @@ public class Main extends JavaPlugin {
      * @param player - Pet owner
      */
     public void spawnPetHere(Player player) {
-        for (World worlds : getServer().getWorlds())
-            for (Entity entities : worlds.getEntities())
-                if (entities.hasMetadata(player.getName()))
-                    entities.remove();
+        try {
+            for (World worlds : getServer().getWorlds())
+                for (Entity entities : worlds.getEntities())
+                    if (entities.hasMetadata(player.getName())) {
+                        entities.remove();
+                    }
 
-        if (petDeath.contains(player.getName())) {
-            player.sendMessage(getFormat(getConfig().getString("pet-death").replaceAll("%number%", String.valueOf(getConfig().getInt("pet-death-minutes")))));
-            return;
-        }
 
-        String namePet = new FilePet(player).getPetConfig().getString("name");
-
-        // Get pet, set character
-        LivingEntity entity = (LivingEntity) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.valueOf(new FilePet(player).getPetConfig().getString("pet")));
-        if (entity instanceof Ageable)
-            ((Ageable) entity).setBaby();
-
-        double hearts = (double) getConfig().getInt("gui.1.hearts." + new FilePet(player).getPetConfig().getInt("hearts"))*2;
-        entity.setMaxHealth(hearts);
-        entity.setHealth(hearts);
-
-        if (!(new FilePet(player).getPetConfig().getInt("level") == 0)) {
-            for (PotionEffect effect : player.getActivePotionEffects())
-                player.removePotionEffect(effect.getType());
-
-            for (String strings : new FilePet(player).getPetConfig().getConfigurationSection("potion-pet").getKeys(false)) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), getConfig().getInt("duration-potion-pet") * 60 * 20,
-                        new FilePet(player).getPetConfig().getInt("potion-pet."+strings)-1));
+            if (petDeath.contains(player.getName())) {
+                player.sendMessage(getFormat(getConfig().getString("pet-death").replaceAll("%number%", String.valueOf(getConfig().getInt("pet-death-minutes")))));
+                return;
             }
-        }
 
-        if (namePet != null) {
-            entity.setCustomName(getFormat(namePet + getConfig().getString("level-pet").replaceAll("%level%", String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
-        } else {
-            entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + " " + getConfig().getString("level-pet").replaceAll("%level%",
-                    String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
-        }
-        entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
-        getPetFollow(player, entity);
+            String namePet = new FilePet(player).getPetConfig().getString("name");
+
+            // Get pet, set character
+            LivingEntity entity = (LivingEntity) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.valueOf(new FilePet(player).getPetConfig().getString("pet")));
+            if (entity instanceof Ageable)
+                ((Ageable) entity).setBaby();
+
+            double hearts = (double) getConfig().getInt("gui.1.hearts." + new FilePet(player).getPetConfig().getInt("hearts")) * 2;
+            entity.setMaxHealth(hearts);
+            entity.setHealth(hearts);
+
+                if (!(new FilePet(player).getPetConfig().getInt("level") == 0)) {
+                    for (PotionEffect effect : player.getActivePotionEffects())
+                        player.removePotionEffect(effect.getType());
+
+                    for (String strings : new FilePet(player).getPetConfig().getConfigurationSection("potion-pet").getKeys(false)) {
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), getConfig().getInt("duration-potion-pet") * 60 * 20,
+                                new FilePet(player).getPetConfig().getInt("potion-pet." + strings) - 1));
+                    }
+                }
+
+            if (namePet != null) {
+                entity.setCustomName(getFormat(namePet + getConfig().getString("level-pet").replaceAll("%level%", String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
+            } else {
+                entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + " " + getConfig().getString("level-pet").replaceAll("%level%",
+                        String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
+            }
+            entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
+            getPetFollow(player, entity);
+        } catch (NullPointerException ignored) {}
     }
 
     /**
