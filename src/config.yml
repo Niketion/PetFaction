@@ -1,0 +1,160 @@
+# Plugin developed by Niketion, License: MIT
+# Github: github.com/Niketion/PetFaction
+faction-depend: true
+list-commands:
+ - '&a/pet gui &7- Open gui'
+ - '&a/pet shop &7- Open shop'
+ - '&a/pet here &7- Teletransport the pet into your position'
+ - '&a/pet change &7- Change your pet'
+ - '&a/pet name &7- Change name'
+ - '&a/pet away &7- Despawn pet'
+arguments-not-found: '&cArguments not found...'
+duration-potion-pet: 10 #minutes
+vip-pet: "&eBuy vip to buy this pet!"
+already-have-pet: "&cYou already have a pet."
+have-not-pet: "&cYou haven't pet."
+permission-denied: "&cYou don't have permission"
+default-name-pet: "%player%'s pet"
+level-pet: "&f(Level: &c%level%&f)"
+pet-member-faction: "&eI'm the pet of your faction-member/ally"
+hits-the-pet: "&ePlease, don't hurt me... i'm your pet :C"
+first-color-shop: "&a"
+pet-despawn: "&eYour pet was despawned"
+kill-pet:
+  killer: "&aYou've kill the pet of %player%"
+  owner-pet: "&aYour pet was kill by %player%"
+pet-death: "&cYour pet is dead. Wait %number% minutes"
+pet-death-minutes: 2 #minute
+pet-not-found: "&cThere isn't your pet in the world"
+max-char-name: "&cMaximum of characters: 27"
+# "\n" To create a new line
+shop-lore: "&7Prize: &a%amount% \n&7Only-VIP: &a%boolean%"
+shop-name: "Pet shop"
+not-enough-money: "&cYou don't have enough money..."
+take-money: "&a%money%$ were taken from your balance."
+shop:
+  1:
+    entity: PIG # Search "entity" here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+    prize: 10000
+    data-egg: 90
+    only-vip: false
+  2:
+    entity: SHEEP
+    prize: 10000
+    data-egg: 91
+    only-vip: false
+  3:
+    entity: COW
+    prize: 10000
+    data-egg: 92
+    only-vip: false
+  4:
+    entity: MUSHROOM_COW
+    prize: 10000
+    data-egg: 96
+    only-vip: false
+  5:
+    entity: WOLF
+    prize: 10000
+    data-egg: 95
+    only-vip: false
+  6:
+    entity: CHICKEN
+    prize: 10000
+    data-egg: 93
+    only-vip: true
+  7:
+    entity: PIG_ZOMBIE
+    prize: 10000
+    data-egg: 57
+    only-vip: true
+# » [Exemple code]
+#
+#  8:
+#    entity: ZOMBIE
+#    prize: 20000
+#    data-egg: 54
+#    only-vip: false
+
+first-color-gui: "&c"
+gui-name: "GUI Pet"
+gui-lore: "&7Level pet: &c%levelPet%\n&7Global level pet: &c%globalLevelPet% \n&7Prize: &c%prize%"
+max-reached: "&cYou've reached the maximum with this kind of potion"
+gui:
+  1:
+    name: "Upgrade pet health"
+    id: 385
+    data: 0
+    level:
+      1: 30000
+      2: 80000
+      3: 12000
+      4: 240000
+    hearts:
+      0: 10
+      1: 25
+      2: 50
+      3: 75
+      4: 100
+  2:
+    name: "Speed"
+    type: SPEED # Search type here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html
+    id: 373
+    data: 8194
+    level:
+      1: 15000
+      2: 25000
+      3: 50000
+      4: 100000
+  3:
+    name: "Strength"
+    type: INCREASE_DAMAGE
+    id: 373
+    data: 8201
+    level:
+      1: 15000
+      2: 25000
+      3: 50000
+      4: 100000
+  4:
+    name: "Resistance"
+    type: DAMAGE_RESISTANCE
+    id: 373
+    data: 8238
+    level:
+      1: 15000
+      2: 25000
+      3: 50000
+      4: 100000
+  5:
+    name: "Regeneration"
+    type: REGENERATION
+    id: 373
+    data: 8193
+    level:
+      1: 15000
+      2: 25000
+      3: 50000
+      4: 100000
+  6:
+    name: "Fire-resistance"
+    type: FIRE_RESISTANCE
+    id: 373
+    data: 8227
+    level:
+      1: 15000
+      2: 25000
+      3: 50000
+      4: 100000
+# » [Exemple code]
+#
+#  7:
+#    name: "Saturation"
+#    type: SATURATION
+#    id: 373
+#    data: 8261
+#    level:
+#      1: 15000
+#      2: 25000
+#      3: 50000
+#      4: 100000

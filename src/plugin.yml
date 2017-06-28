@@ -1,0 +1,35 @@
+name: PetFaction
+author: Niketion
+version: 1.3
+main: github.niketion.petfaction.Main
+softdepend: [Vault, Factions]
+commands:
+  pet:
+    description: PetFaction command
+permissions:
+  petfaction.*:
+    children:
+      petfaction.vip: true
+      petfaction.sign: true
+      petfaction.away: true
+      petfaction.here: true
+      petfaction.shop: true
+      petfaction.gui: true
+      petfaction.change: true
+      petfaction.name: true
+  petfaction.vip:
+    default: op
+  petfaction.sign:
+    default: op
+  petfaction.away:
+    default: true
+  petfaction.here:
+    default: true
+  petfaction.shop:
+    default: true
+  petfaction.gui:
+    default: true
+  petfaction.change:
+    default: true
+  petfaction.name:
+    default: true
