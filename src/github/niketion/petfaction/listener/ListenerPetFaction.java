@@ -52,6 +52,7 @@ public class ListenerPetFaction implements Listener {
             main.removePotion(event.getPlayer());
         }
     }
+
     /**
      * On click gui shop
      */
@@ -66,7 +67,7 @@ public class ListenerPetFaction implements Listener {
 
             String potionGUI = getConfig().getString("gui." + slot + ".name");
 
-            if (GUI.getGui(ChatColor.stripColor(event.getInventory().getTitle()))) {
+            if (new GUI(ChatColor.stripColor(event.getInventory().getTitle())).getGui()) {
                 event.setResult(Event.Result.DENY);
                 event.setCancelled(true);
                 if (event.getCurrentItem().getItemMeta().getDisplayName().equals(format(getConfig().getString("first-color-shop") + entityShop))) {
@@ -96,9 +97,9 @@ public class ListenerPetFaction implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         try {
             if (event.getDamager() instanceof Player) {
-                if (event.getEntity().hasMetadata(((Player) event.getDamager()).getName())) {
+                if (event.getEntity().hasMetadata(event.getDamager().getName())) {
                     event.setCancelled(true);
-                    ((Player) event.getDamager()).sendMessage(format(getConfig().getString("hits-the-pet")));
+                    event.getDamager().sendMessage(format(getConfig().getString("hits-the-pet")));
                     return;
                 }
 
@@ -112,7 +113,7 @@ public class ListenerPetFaction implements Listener {
                                     if (event.getEntity().hasMetadata(players.getName()))
                                         if (factionDamager.getRelationWish(factionPlayers).isAtLeast(Rel.ALLY) || factionDamager.equals(factionPlayers)) {
                                             event.setCancelled(true);
-                                            ((Player) event.getDamager()).sendMessage(format(getConfig().getString("pet-member-faction")));
+                                            event.getDamager().sendMessage(format(getConfig().getString("pet-member-faction")));
                                         }
                                 }
                         } else if (main.getServer().getPluginManager().getPlugin("LegacyFactions") != null) {
@@ -123,7 +124,7 @@ public class ListenerPetFaction implements Listener {
                                     if (event.getEntity().hasMetadata(players.getName())) {
                                         if (factionDamager.getRelationWish(factionPlayer).equals(Relation.ALLY) || factionDamager.equals(factionPlayer)) {
                                             event.setCancelled(true);
-                                            ((Player) event.getDamager()).sendMessage(format(getConfig().getString("pet-member-faction")));
+                                            event.getDamager().sendMessage(format(getConfig().getString("pet-member-faction")));
                                         }
                                     }
                                 }

@@ -12,10 +12,12 @@ import java.util.ArrayList;
  */
 public class GUI {
 
+    private String name;
     private Inventory inventory;
     private static ArrayList<String> gui = new ArrayList<>();
 
     public GUI(String name) {
+        this.name = name;
         int shopRows = ((getConfig().getConfigurationSection("shop").getKeys(false).size()/9)+1)*9;
         int guiRows = ((getConfig().getConfigurationSection("gui").getKeys(false).size()/9)+1)*9;
 
@@ -46,10 +48,9 @@ public class GUI {
     /**
      * Check if the gui was created by the plugin
      *
-     * @param strings - Title gui (No chatcolor)
      * @return boolean
      */
-    public static boolean getGui(String strings) {
-        return gui.contains(strings);
+    public boolean getGui() {
+        return gui.contains(this.name);
     }
 }
