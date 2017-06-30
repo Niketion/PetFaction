@@ -4,6 +4,7 @@ import com.massivecraft.factions.FPlayers;
 import com.massivecraft.factions.Faction;
 import com.massivecraft.factions.struct.Rel;
 import github.niketion.petfaction.Main;
+import github.niketion.petfaction.Permissions;
 import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.gui.GUI;
 import net.milkbowl.vault.economy.Economy;
@@ -72,7 +73,7 @@ public class ListenerPetFaction implements Listener {
                 event.setCancelled(true);
                 if (event.getCurrentItem().getItemMeta().getDisplayName().equals(format(getConfig().getString("first-color-shop") + entityShop))) {
                     if (getConfig().getBoolean("shop." + slot + ".only-vip")) {
-                        if (player.hasPermission("petfaction.vip")) {
+                        if (player.hasPermission(Permissions.VIP.toString())) {
                             balanceExecuteShop(player, moneyShop, entityShop);
                         } else {
                             player.sendMessage(format(getConfig().getString("vip-pet")));
@@ -173,7 +174,7 @@ public class ListenerPetFaction implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
-        if (event.getPlayer().hasPermission("petfaction.sign"))
+        if (event.getPlayer().hasPermission(Permissions.SIGN.toString()))
             if (event.getLine(0).contains("[PetFaction]"))
                 event.setLine(0, ChatColor.DARK_BLUE + "[PetFaction]");
     }

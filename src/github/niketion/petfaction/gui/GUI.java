@@ -51,6 +51,6 @@ public class GUI {
      * @return boolean
      */
     public boolean getGui() {
-        return gui.contains(this.name);
+        return gui.contains(name);
     }
 }

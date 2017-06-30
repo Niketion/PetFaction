@@ -1,6 +1,7 @@
 package github.niketion.petfaction.command;
 
 import github.niketion.petfaction.Main;
+import github.niketion.petfaction.Permissions;
 import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.gui.GUI;
 import org.bukkit.Bukkit;
@@ -35,7 +36,7 @@ public class CommandPet implements CommandExecutor {
         Inventory inventory;
         switch (strings[0]) {
             case "shop":
-                if (hasPermission(player, "shop")) {
+                if (hasPermission(player, Permissions.COMMAND_SHOP)) {
                     if (new File(Main.getInstance().getDataFolder() + "/userpet/"+player.getName()+".yml").exists()) {
                         player.sendMessage(format(getString("already-have-pet")));
                         return false;
@@ -49,13 +50,13 @@ public class CommandPet implements CommandExecutor {
                     return true;
                 }
             case "here":
-                if (hasPermission(player, "here"))
+                if (hasPermission(player, Permissions.COMMAND_HERE))
                     if (Main.getInstance().hasPet(player)) {
                         Main.getInstance().spawnPetHere(player);
                     }
                 return true;
             case "away":
-                if (hasPermission(player, "away"))
+                if (hasPermission(player, Permissions.COMMAND_AWAY))
                     if (Main.getInstance().hasPet(player)) {
                         // "Kill" pet
                         for (World worlds : Bukkit.getServer().getWorlds())
@@ -68,7 +69,7 @@ public class CommandPet implements CommandExecutor {
                     }
                 return true;
             case "name":
-                if (hasPermission(player, "name"))
+                if (hasPermission(player, Permissions.COMMAND_NAME))
                     if (Main.getInstance().hasPet(player)) {
                         String name = "";
                         for (int i = 1; i != strings.length; i++)
@@ -83,7 +84,7 @@ public class CommandPet implements CommandExecutor {
 
                 return true;
             case "change":
-                if (hasPermission(player, "change"))
+                if (hasPermission(player, Permissions.COMMAND_CHANGE))
                     if (Main.getInstance().hasPet(player)) {
                         inventory = new GUI(getString("shop-name")).getInventory();
                         for (int i = 1; i < getConfig().getConfigurationSection("shop").getKeys(false).size() + 1; i++) {
@@ -93,7 +94,7 @@ public class CommandPet implements CommandExecutor {
                     }
                 return true;
             case "gui":
-                if (hasPermission(player, "gui"))
+                if (hasPermission(player, Permissions.COMMAND_GUI))
                     if (Main.getInstance().hasPet(player)) {
                         inventory = new GUI(getString("gui-name")).getInventory();
                         for (int i = 1; i < getConfig().getConfigurationSection("gui").getKeys(false).size() + 1; i++) {
@@ -124,11 +125,12 @@ public class CommandPet implements CommandExecutor {
     /**
      * Check if player has permission
      *
-     * @param value - Value permission
+     * @param player - Who check permission
+     * @param permissions - Enum permission
      * @return Boolean
      */
-     private boolean hasPermission(Player player, String value) {
-         if (player.hasPermission("petfaction."+value)) {
+     private boolean hasPermission(Player player, Permissions permissions) {
+         if (player.hasPermission(permissions.toString())) {
              return true;
          } else {
              player.sendMessage(format(getString("permission-denied")));
