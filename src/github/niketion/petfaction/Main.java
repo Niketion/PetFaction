@@ -5,7 +5,6 @@ import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.listener.ListenerPetFaction;
 import github.niketion.petfaction.petfollow.*;
 import net.milkbowl.vault.economy.Economy;
-import net.minecraft.util.org.apache.commons.lang3.ObjectUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.*;

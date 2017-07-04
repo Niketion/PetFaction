@@ -2,7 +2,7 @@ package github.niketion.petfaction.listener;
 
 import com.massivecraft.factions.FPlayers;
 import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.Rel;
+import com.massivecraft.factions.Factions;
 import github.niketion.petfaction.Main;
 import github.niketion.petfaction.Permissions;
 import github.niketion.petfaction.file.FilePet;
@@ -109,13 +109,13 @@ public class ListenerPetFaction implements Listener {
                         if (main.getServer().getPluginManager().getPlugin("Factions") != null) {
                             for (World worlds : Bukkit.getWorlds())
                                 for (Player players : worlds.getPlayers()) {
-                                    Faction factionPlayers = FPlayers.i.get(players).getFaction();
-                                    Faction factionDamager = FPlayers.i.get((Player) event.getDamager()).getFaction();
-                                    if (event.getEntity().hasMetadata(players.getName()))
-                                        if (factionDamager.getRelationWish(factionPlayers).isAtLeast(Rel.ALLY) || factionDamager.equals(factionPlayers)) {
-                                            event.setCancelled(true);
-                                            event.getDamager().sendMessage(format(getConfig().getString("pet-member-faction")));
-                                        }
+                                        Faction factionPlayers = Factions.getInstance().getFactionById(FPlayers.getInstance().getByPlayer(players).getFactionId());
+                                        Faction factionDamager = Factions.getInstance().getFactionById(FPlayers.getInstance().getByPlayer((Player) event.getDamager()).getFactionId());
+                                        if (event.getEntity().hasMetadata(players.getName()))
+                                            if (factionDamager.getRelationWish(factionPlayers) == com.massivecraft.factions.struct.Relation.ALLY || factionDamager.equals(factionPlayers)) {
+                                                event.setCancelled(true);
+                                                event.getDamager().sendMessage(format(getConfig().getString("pet-member-faction")));
+                                            }
                                 }
                         } else if (main.getServer().getPluginManager().getPlugin("LegacyFactions") != null) {
                             for (World worlds : Bukkit.getWorlds())
@@ -123,7 +123,7 @@ public class ListenerPetFaction implements Listener {
                                     net.redstoneore.legacyfactions.entity.Faction factionDamager = FactionColl.get(event.getDamager());
                                     net.redstoneore.legacyfactions.entity.Faction factionPlayer = FactionColl.get(players);
                                     if (event.getEntity().hasMetadata(players.getName())) {
-                                        if (factionDamager.getRelationWish(factionPlayer).equals(Relation.ALLY) || factionDamager.equals(factionPlayer)) {
+                                        if (factionDamager.getRelationWish(factionPlayer) == Relation.ALLY || factionDamager.equals(factionPlayer)) {
                                             event.setCancelled(true);
                                             event.getDamager().sendMessage(format(getConfig().getString("pet-member-faction")));
                                         }
@@ -131,7 +131,7 @@ public class ListenerPetFaction implements Listener {
                                 }
                         }
                 } catch (NoClassDefFoundError | NoSuchFieldError error) {
-                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction not supported, please change it with FactionsOne or LegacyFactions");
+                    main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction not supported, please change it with FactionsUUID (Faction 1.6.9.5) or LegacyFactions");
                     main.getConfig().set("faction-depend", false);
                     main.saveDefaultConfig();
                 }
