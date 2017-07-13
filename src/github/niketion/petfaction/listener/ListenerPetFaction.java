@@ -69,9 +69,9 @@ public class ListenerPetFaction implements Listener {
             String potionGUI = getConfig().getString("gui." + slot + ".name");
 
             if (new GUI(ChatColor.stripColor(event.getInventory().getTitle())).getGui()) {
-                event.setResult(Event.Result.DENY);
-                event.setCancelled(true);
                 if (event.getCurrentItem().getItemMeta().getDisplayName().equals(format(getConfig().getString("first-color-shop") + entityShop))) {
+                    event.setResult(Event.Result.DENY);
+                    event.setCancelled(true);
                     if (getConfig().getBoolean("shop." + slot + ".only-vip")) {
                         if (player.hasPermission(Permissions.VIP.toString())) {
                             balanceExecuteShop(player, moneyShop, entityShop);
@@ -82,6 +82,8 @@ public class ListenerPetFaction implements Listener {
                         balanceExecuteShop(player, moneyShop, entityShop);
                     }
                 } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(format(getConfig().getString("first-color-gui") + potionGUI))) {
+                    event.setResult(Event.Result.DENY);
+                    event.setCancelled(true);
                     String typePotion = getConfig().getString("gui."+slot+".type");
 
                     if (typePotion == null) {

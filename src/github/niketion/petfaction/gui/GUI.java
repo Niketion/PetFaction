@@ -14,7 +14,7 @@ public class GUI {
 
     private String name;
     private Inventory inventory;
-    private static ArrayList<String> gui = new ArrayList<>();
+    private ArrayList<String> gui = new ArrayList<>();
 
     public GUI(String name) {
         this.name = name;

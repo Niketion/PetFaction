@@ -5,9 +5,11 @@ import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.listener.ListenerPetFaction;
 import github.niketion.petfaction.petfollow.*;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.*;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -90,9 +92,9 @@ public class Main extends JavaPlugin {
                 pluginManager.disablePlugin(this);
             }
         } else {
-            log(null, ChatColor.RED+" Failed to setup PetFaction", 1);
-            log(null, ChatColor.RED+" Your server version is compatible with this plugin (1.7.x-1.12.x)? Version server is" +  getServer().getClass().getPackage().getName().replace(".",  ",").split(",")[3], 1);
-            log(null, ChatColor.RED+" You've install depends? (Depend: "+getDescription().getSoftDepend()+")", 1);
+            log(null, ChatColor.RED + " Failed to setup PetFaction", 1);
+            log(null, ChatColor.RED + " Your server version is compatible with this plugin (1.7.x-1.12.x)? Version server is " + getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3], 1);
+            log(null, ChatColor.RED + " You've install depends? (Depend: " + getDescription().getSoftDepend() + " and a plugin with economy)", 1);
 
             pluginManager.disablePlugin(this);
         }
@@ -112,6 +114,7 @@ public class Main extends JavaPlugin {
                                 entities.remove();
                                 players.sendMessage(getFormat(getConfig().getString("pet-despawn")));
                                 removePotion(players);
+                                Bukkit.createInventory(null, InventoryType.ANVIL);
                             }
         } catch (NullPointerException ignored) {}
     }
