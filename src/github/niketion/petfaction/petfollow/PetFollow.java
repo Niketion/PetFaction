@@ -5,6 +5,6 @@ import org.bukkit.entity.Player;
 
 public interface PetFollow {
 
-    public void petFollow(final Player player, final Entity pet);
+    void petFollow(final Player player, final Entity pet);
 
 }
