@@ -17,7 +17,7 @@ public enum Permissions {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return perms;
     }
 }

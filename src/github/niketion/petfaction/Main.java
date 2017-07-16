@@ -1,21 +1,21 @@
 package github.niketion.petfaction;
 
 import github.niketion.petfaction.command.CommandPet;
-import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.listener.ListenerPetFaction;
 import github.niketion.petfaction.petfollow.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class Main extends JavaPlugin {
 
     private PetFollow petFollow;
     private PluginManager pluginManager = getServer().getPluginManager();
-    private ArrayList<String> petDeath = new ArrayList<>();
+    ArrayList<String> petDeath = new ArrayList<>();
 
     /**
      * Instance the class
@@ -85,6 +85,7 @@ public class Main extends JavaPlugin {
 
             try {
                 pluginManager.registerEvents(new ListenerPetFaction(), this);
+                pluginManager.registerEvents(new WorldGuardBypass(), this);
                 getCommand("pet").setExecutor(new CommandPet());
             } catch (Exception exception) {
                 log(null, ChatColor.RED+"Error on load commands/listeners, exception: "+exception.getClass().getSimpleName(), 1);
@@ -94,7 +95,8 @@ public class Main extends JavaPlugin {
         } else {
             log(null, ChatColor.RED + " Failed to setup PetFaction", 1);
             log(null, ChatColor.RED + " Your server version is compatible with this plugin (1.7.x-1.12.x)? Version server is " + getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3], 1);
-            log(null, ChatColor.RED + " You've install depends? (Depend: " + getDescription().getSoftDepend() + " and a plugin with economy)", 1);
+            log(null, ChatColor.RED + " You've install depends? (Depend: " + getDescription().getDepend() + " and a plugin support economy)", 1);
+            log(null, ChatColor.RED + " (SoftDepend: " + getDescription().getSoftDepend() + ")", 1);
 
             pluginManager.disablePlugin(this);
         }
@@ -212,7 +214,7 @@ public class Main extends JavaPlugin {
     /**
      * Get follow pet by interface
      */
-    private void getPetFollow(Player player, Entity entity) {
+    void getPetFollow(Player player, Entity entity) {
         petFollow.petFollow(player, entity);
     }
 
@@ -239,50 +241,9 @@ public class Main extends JavaPlugin {
      *
      * @param player - Pet owner
      */
+    @Deprecated
     public void spawnPetHere(Player player) {
-        try {
-            for (World worlds : getServer().getWorlds())
-                for (Entity entities : worlds.getEntities())
-                    if (entities.hasMetadata(player.getName())) {
-                        entities.remove();
-                    }
-
-
-            if (petDeath.contains(player.getName())) {
-                player.sendMessage(getFormat(getConfig().getString("pet-death").replaceAll("%number%", String.valueOf(getConfig().getInt("pet-death-minutes")))));
-                return;
-            }
-
-            String namePet = new FilePet(player).getPetConfig().getString("name");
-
-            // Get pet, set character
-            LivingEntity entity = (LivingEntity) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.valueOf(new FilePet(player).getPetConfig().getString("pet")));
-            if (entity instanceof Ageable)
-                ((Ageable) entity).setBaby();
-
-            double hearts = (double) getConfig().getInt("gui.1.hearts." + new FilePet(player).getPetConfig().getInt("hearts")) * 2;
-            entity.setMaxHealth(hearts);
-            entity.setHealth(hearts);
-
-                if (!(new FilePet(player).getPetConfig().getInt("level") == 0)) {
-                    for (PotionEffect effect : player.getActivePotionEffects())
-                        player.removePotionEffect(effect.getType());
-
-                    for (String strings : new FilePet(player).getPetConfig().getConfigurationSection("potion-pet").getKeys(false)) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), getConfig().getInt("duration-potion-pet") * 60 * 20,
-                                new FilePet(player).getPetConfig().getInt("potion-pet." + strings) - 1));
-                    }
-                }
-
-            if (namePet != null) {
-                entity.setCustomName(getFormat(namePet + getConfig().getString("level-pet").replaceAll("%level%", String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
-            } else {
-                entity.setCustomName(getFormat(getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + " " + getConfig().getString("level-pet").replaceAll("%level%",
-                        String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
-            }
-            entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
-            getPetFollow(player, entity);
-        } catch (NullPointerException ignored) {}
+        new WorldGuardBypass(player).spawn();
     }
 
     /**
