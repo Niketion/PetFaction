@@ -137,6 +137,12 @@ public class ListenerPetFaction implements Listener {
                     main.getConfig().set("faction-depend", false);
                     main.saveDefaultConfig();
                 }
+            } else {
+                // I remove the possibility that the pet attacks other players
+                for (World worlds : Bukkit.getWorlds())
+                    for (Player players : worlds.getPlayers())
+                        if (event.getDamager().hasMetadata(players.getName()))
+                            event.setCancelled(true);
             }
         } catch (Exception ignored) {}
     }
