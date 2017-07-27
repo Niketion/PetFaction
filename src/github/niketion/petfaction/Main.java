@@ -7,10 +7,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -91,7 +88,20 @@ public class Main extends JavaPlugin {
                 log(null, ChatColor.RED+"Error on load commands/listeners, exception: "+exception.getClass().getSimpleName(), 1);
 
                 pluginManager.disablePlugin(this);
+                return;
             }
+
+            //Set adult pet to baby (3 minutes)
+            getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+                @Override
+                public void run() {
+                    for (World worlds : Bukkit.getWorlds())
+                        for (Entity entities : worlds.getEntities())
+                            if (entities instanceof Ageable)
+                                if (((Ageable) entities).isAdult())
+                                    ((Ageable) entities).setBaby();
+                }
+            }, 60 * 3);
         } else {
             log(null, ChatColor.RED + " Failed to setup PetFaction", 1);
             log(null, ChatColor.RED + " Your server version is compatible with this plugin (1.7.x-1.12.x)? Version server is " + getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3], 1);
@@ -107,18 +117,23 @@ public class Main extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        try {
-            for (World worlds : getServer().getWorlds())
-                for (Player players : worlds.getPlayers())
-                    for (Entity entities : worlds.getEntities())
-                        if (entities.hasMetadata(players.getName()))
-                            if (entities instanceof Monster || entities instanceof Animals) {
-                                entities.remove();
-                                players.sendMessage(getFormat(getConfig().getString("pet-despawn")));
-                                removePotion(players);
-                                Bukkit.createInventory(null, InventoryType.ANVIL);
-                            }
-        } catch (NullPointerException ignored) {}
+        removeAllPet();
+    }
+
+    /**
+     * Remove all pet in the server
+     */
+    private void removeAllPet() {
+        for (World worlds : getServer().getWorlds())
+            for (Player players : worlds.getPlayers())
+                for (Entity entities : worlds.getEntities())
+                    if (entities.hasMetadata(players.getName()))
+                        if (entities instanceof Monster || entities instanceof Animals) {
+                            entities.remove();
+                            players.sendMessage(getFormat(getConfig().getString("pet-despawn")));
+                            removePotion(players);
+                            Bukkit.createInventory(null, InventoryType.ANVIL);
+                        }
     }
 
     /**
