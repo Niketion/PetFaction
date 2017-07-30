@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -27,6 +28,11 @@ class WorldGuardBypass implements Listener {
      */
     private Player player;
 
+    /**
+     * Check if entity spawned is a pet
+     */
+    private boolean isPet = false;
+
     WorldGuardBypass(Player player) {
         this.player = player;
     }
@@ -34,11 +40,25 @@ class WorldGuardBypass implements Listener {
     WorldGuardBypass() {
     }
 
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if (event.getMessage().contains("/pet")) {
+            isPet = true;
+            main.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+                @Override
+                public void run() {
+                    isPet = false;
+                }
+            }, 5L);
+        }
+    }
+
     private boolean force = true;
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onSpawn(CreatureSpawnEvent e){
+    public void onSpawn(CreatureSpawnEvent event){
         if (force){
-            e.setCancelled(false);
+            if (isPet)
+                event.setCancelled(false);
         }
     }
 
