@@ -102,7 +102,7 @@ public class ListenerPetFaction implements Listener {
             if (event.getDamager() instanceof Player) {
                 if (event.getEntity().hasMetadata(((Player)event.getDamager()).getName())) {
                     event.setCancelled(true);
-                    event.getDamager().sendMessage(format(getConfig().getString("hits-the-pet")));
+                    ((Player)event.getDamager()).sendMessage(format(getConfig().getString("hits-the-pet")));
                     return;
                 }
 
