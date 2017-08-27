@@ -1,6 +1,6 @@
 name: PetFaction
 author: Niketion
-version: 1.4.2
+version: 1.4.4
 main: github.niketion.petfaction.Main
 softdepend: [Factions]
 depend: [Vault]

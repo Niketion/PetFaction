@@ -100,7 +100,7 @@ public class ListenerPetFaction implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         try {
             if (event.getDamager() instanceof Player) {
-                if (event.getEntity().hasMetadata(event.getDamager().getName())) {
+                if (event.getEntity().hasMetadata(((Player)event.getDamager()).getName())) {
                     event.setCancelled(true);
                     event.getDamager().sendMessage(format(getConfig().getString("hits-the-pet")));
                     return;
@@ -132,7 +132,7 @@ public class ListenerPetFaction implements Listener {
                                     }
                                 }
                         }
-                } catch (NoClassDefFoundError | NoSuchFieldError error) {
+                } catch (Exception exception) {
                     main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction not supported, please change it with FactionsUUID (Faction 1.6.9.5) or LegacyFactions");
                     main.getConfig().set("faction-depend", false);
                     main.saveDefaultConfig();
