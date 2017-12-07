@@ -2,6 +2,7 @@ package github.niketion.petfaction;
 
 import github.niketion.petfaction.file.FilePet;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -56,7 +57,8 @@ class SpawnEntity implements Listener {
 
     void spawn() {
         force = false;
-        try {
+        //try {
+
             FileConfiguration config = main.getConfig();
             FileConfiguration petConfig = new FilePet(player).getPetConfig();
             World worldPlayer = player.getWorld();
@@ -89,10 +91,13 @@ class SpawnEntity implements Listener {
                 for (PotionEffect effect : player.getActivePotionEffects())
                     player.removePotionEffect(effect.getType());
 
-                for (String strings : petConfig.getConfigurationSection("potion-pet").getKeys(false)) {
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), config.getInt("duration-potion-pet") * 60 * 20,
-                            petConfig.getInt("potion-pet." + strings) - 1));
-                }
+                ConfigurationSection sectionPotion = petConfig.getConfigurationSection("potion-pet");
+
+                if (sectionPotion != null)
+                    for (String strings : sectionPotion.getKeys(false))
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), config.getInt("duration-potion-pet") * 60 * 20,
+                                petConfig.getInt("potion-pet." + strings) - 1));
+
             }
 
             if (namePet != null) {
@@ -104,7 +109,7 @@ class SpawnEntity implements Listener {
             entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
 
             main.getPetFollow(player, entity);
-        } catch (NullPointerException ignored) {}
+        //} catch (NullPointerException ignored) {}
         force = true;
     }
 }
