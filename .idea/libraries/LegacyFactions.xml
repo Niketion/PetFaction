@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="LegacyFactions">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../Public/REP/LegacyFactions.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

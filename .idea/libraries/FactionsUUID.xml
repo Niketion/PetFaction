@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="FactionsUUID">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../Public/REP/FactionsUUID.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

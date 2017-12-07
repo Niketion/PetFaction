@@ -2,6 +2,7 @@ package github.niketion.petfaction.petfollow;
 
 import github.niketion.petfaction.Main;
 import net.minecraft.server.v1_7_R4.EntityInsentient;
+import net.minecraft.server.v1_7_R4.GenericAttributes;
 import net.minecraft.server.v1_7_R4.PathEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,6 +31,9 @@ public class PetFollow_1_7_R4 implements PetFollow  {
                         ((EntityInsentient) petf).getNavigation().a(path, 1.0D);
                         ((EntityInsentient) petf).getNavigation().a(2.0D);
                     }
+
+                    ((EntityInsentient) petf).getAttributeInstance(GenericAttributes.d).setValue(0.16000000298023224D);
+
                     if (Bukkit.getPlayer(player.getName()).getLocation().getWorld().equals(pet.getLocation().getWorld())) {
                         int distance = (int) Bukkit.getPlayer(player.getName()).getLocation().distance(pet.getLocation());
                         if (distance > 10 && !pet.isDead() && player.isOnGround()) {

@@ -71,11 +71,11 @@ public class CommandPet implements CommandExecutor {
             case "name":
                 if (hasPermission(player, Permissions.COMMAND_NAME))
                     if (Main.getInstance().hasPet(player)) {
-                        String name = "";
+                        StringBuilder name = new StringBuilder();
                         for (int i = 1; i != strings.length; i++)
-                            name += strings[i] + " ";
+                            name.append(strings[i]).append(" ");
                         if (!(name.length() > 28)) {
-                            new FilePet(player).set("name", name);
+                            new FilePet(player).set("name", name.toString());
                             Main.getInstance().spawnPetHere(player);
                         } else {
                             player.sendMessage(format(getString("max-char-name")));

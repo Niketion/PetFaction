@@ -82,26 +82,13 @@ public class Main extends JavaPlugin {
 
             try {
                 pluginManager.registerEvents(new ListenerPetFaction(), this);
-                pluginManager.registerEvents(new WorldGuardBypass(), this);
+                pluginManager.registerEvents(new SpawnEntity(), this);
                 getCommand("pet").setExecutor(new CommandPet());
             } catch (Exception exception) {
                 log(null, ChatColor.RED+"Error on load commands/listeners, exception: "+exception.getClass().getSimpleName(), 1);
 
                 pluginManager.disablePlugin(this);
-                return;
             }
-
-            //Set adult pet to baby (3 minutes)
-            getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-                @Override
-                public void run() {
-                    for (World worlds : Bukkit.getWorlds())
-                        for (Entity entities : worlds.getEntities())
-                            if (entities instanceof Ageable)
-                                if (((Ageable) entities).isAdult())
-                                    ((Ageable) entities).setBaby();
-                }
-            }, 60 * 3);
         } else {
             log(null, ChatColor.RED + " Failed to setup PetFaction", 1);
             log(null, ChatColor.RED + " Your server version is compatible with this plugin (1.7.x-1.12.x)? Version server is " + getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3], 1);
@@ -258,7 +245,7 @@ public class Main extends JavaPlugin {
      */
     @Deprecated
     public void spawnPetHere(Player player) {
-        new WorldGuardBypass(player).spawn();
+        new SpawnEntity(player).spawn();
     }
 
     /**

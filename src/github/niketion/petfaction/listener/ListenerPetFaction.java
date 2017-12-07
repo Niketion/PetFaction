@@ -1,15 +1,10 @@
 package github.niketion.petfaction.listener;
 
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
 import github.niketion.petfaction.Main;
 import github.niketion.petfaction.Permissions;
 import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.gui.GUI;
 import net.milkbowl.vault.economy.Economy;
-import net.redstoneore.legacyfactions.Relation;
-import net.redstoneore.legacyfactions.entity.FactionColl;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -107,8 +102,8 @@ public class ListenerPetFaction implements Listener {
                 }
 
                 try {
-                    if (main.getFaction())
-                        if (main.getServer().getPluginManager().getPlugin("Factions") != null) {
+                    if (main.getFaction()) {}
+                        /*if (main.getServer().getPluginManager().getPlugin("Factions") != null) {
                             for (World worlds : Bukkit.getWorlds())
                                 for (Player players : worlds.getPlayers()) {
                                         Faction factionPlayers = Factions.getInstance().getFactionById(FPlayers.getInstance().getByPlayer(players).getFactionId());
@@ -131,7 +126,7 @@ public class ListenerPetFaction implements Listener {
                                         }
                                     }
                                 }
-                        }
+                        }*/
                 } catch (Exception exception) {
                     main.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[PetFaction] Version of faction not supported, please change it with FactionsUUID (Faction 1.6.9.5) or LegacyFactions");
                     main.getConfig().set("faction-depend", false);

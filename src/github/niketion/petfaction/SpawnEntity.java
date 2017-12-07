@@ -2,6 +2,7 @@ package github.niketion.petfaction;
 
 import github.niketion.petfaction.file.FilePet;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,35 +13,26 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class WorldGuardBypass implements Listener {
-    /*
-      This class has been designed to bypass the
-      "mob-spawning" of worldguard or other plugins
-     */
+/**
+  This class has been designed to bypass the
+  "mob-spawning" of worldguard or other plugins
+ */
+class SpawnEntity implements Listener {
 
-    /**
-     * Get main instance
-     */
     private Main main = Main.getInstance();
 
-    /**
-     * Owner's pet
-     */
     private Player player;
 
-    /**
-     * Check if entity spawned is a pet
-     */
+    /** Check if entity spawned is a pet */
     private boolean isPet = false;
 
-    WorldGuardBypass(Player player) {
+    SpawnEntity(Player player) {
         this.player = player;
     }
 
-    WorldGuardBypass() {
-    }
+    SpawnEntity() { }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().contains("/pet")) {
             isPet = true;
@@ -54,7 +46,7 @@ class WorldGuardBypass implements Listener {
     }
 
     private boolean force = true;
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSpawn(CreatureSpawnEvent event){
         if (force){
             if (isPet)
@@ -65,6 +57,10 @@ class WorldGuardBypass implements Listener {
     void spawn() {
         force = false;
         try {
+            FileConfiguration config = main.getConfig();
+            FileConfiguration petConfig = new FilePet(player).getPetConfig();
+            World worldPlayer = player.getWorld();
+
             for (World worlds : main.getServer().getWorlds())
                 for (Entity entities : worlds.getEntities())
                     if (entities.hasMetadata(player.getName())) {
@@ -72,38 +68,41 @@ class WorldGuardBypass implements Listener {
                     }
 
             if (main.petDeath.contains(player.getName())) {
-                player.sendMessage(main.getFormat(main.getConfig().getString("pet-death").replaceAll("%number%", String.valueOf(main.getConfig().getInt("pet-death-minutes")))));
+                player.sendMessage(main.getFormat(config.getString("pet-death").replaceAll("%number%", String.valueOf(config.getInt("pet-death-minutes")))));
                 return;
             }
 
-            String namePet = new FilePet(player).getPetConfig().getString("name");
+            String namePet = petConfig.getString("name");
 
             // Get pet, set character
-            LivingEntity entity = (LivingEntity) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.valueOf(new FilePet(player).getPetConfig().getString("pet")));
-            if (entity instanceof Ageable)
+            LivingEntity entity = (LivingEntity) worldPlayer.spawnEntity(player.getLocation(), EntityType.valueOf(petConfig.getString("pet")));
+            if (entity instanceof Ageable) {
                 ((Ageable) entity).setBaby();
+                ((Ageable) entity).setAgeLock(true);
+            }
 
-            double hearts = (double) main.getConfig().getInt("gui.1.hearts." + new FilePet(player).getPetConfig().getInt("hearts")) * 2;
+            double hearts = (double) config.getInt("gui.1.hearts." + petConfig.getInt("hearts")) * 2;
             entity.setMaxHealth(hearts);
             entity.setHealth(hearts);
 
-            if (!(new FilePet(player).getPetConfig().getInt("level") == 0)) {
+            if (!(petConfig.getInt("level") == 0)) {
                 for (PotionEffect effect : player.getActivePotionEffects())
                     player.removePotionEffect(effect.getType());
 
-                for (String strings : new FilePet(player).getPetConfig().getConfigurationSection("potion-pet").getKeys(false)) {
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), main.getConfig().getInt("duration-potion-pet") * 60 * 20,
-                            new FilePet(player).getPetConfig().getInt("potion-pet." + strings) - 1));
+                for (String strings : petConfig.getConfigurationSection("potion-pet").getKeys(false)) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(strings), config.getInt("duration-potion-pet") * 60 * 20,
+                            petConfig.getInt("potion-pet." + strings) - 1));
                 }
             }
 
             if (namePet != null) {
-                entity.setCustomName(main.getFormat(namePet + main.getConfig().getString("level-pet").replaceAll("%level%", String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
+                entity.setCustomName(main.getFormat(namePet + config.getString("level-pet").replaceAll("%level%", String.valueOf(petConfig.getInt("level")))));
             } else {
-                entity.setCustomName(main.getFormat(main.getConfig().getString("default-name-pet").replaceAll("%player%", player.getName()) + " " + main.getConfig().getString("level-pet").replaceAll("%level%",
-                        String.valueOf(new FilePet(player).getPetConfig().getInt("level")))));
+                entity.setCustomName(main.getFormat(config.getString("default-name-pet").replaceAll("%player%", player.getName()) + " " + config.getString("level-pet").replaceAll("%level%",
+                        String.valueOf(petConfig.getInt("level")))));
             }
             entity.setMetadata(player.getName(), new FixedMetadataValue(Main.getInstance(), "yes!"));
+
             main.getPetFollow(player, entity);
         } catch (NullPointerException ignored) {}
         force = true;
