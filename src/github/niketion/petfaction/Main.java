@@ -1,5 +1,6 @@
 package github.niketion.petfaction;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import github.niketion.petfaction.command.CommandPet;
 import github.niketion.petfaction.listener.ListenerPetFaction;
 import github.niketion.petfaction.petfollow.*;
@@ -7,8 +8,12 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -268,5 +273,15 @@ public class Main extends JavaPlugin {
             player.sendMessage(getFormat(getConfig().getString("have-not-pet")));
             return false;
         }
+    }
+
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null;
+        }
+
+        return (WorldGuardPlugin) plugin;
     }
 }

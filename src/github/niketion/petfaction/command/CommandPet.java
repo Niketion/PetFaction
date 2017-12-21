@@ -2,10 +2,10 @@ package github.niketion.petfaction.command;
 
 import github.niketion.petfaction.Main;
 import github.niketion.petfaction.Permissions;
+import github.niketion.petfaction.SpawnEntity;
 import github.niketion.petfaction.file.FilePet;
 import github.niketion.petfaction.gui.GUI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -19,7 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class CommandPet implements CommandExecutor {
 
@@ -29,6 +30,14 @@ public class CommandPet implements CommandExecutor {
             listArguments(commandSender);
             return false;
         }
+
+        SpawnEntity.setPet(true);
+        Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                SpawnEntity.setPet(false);
+            }
+        }, 5L);
 
         assert commandSender instanceof Player;
         Player player = (Player) commandSender;
@@ -54,6 +63,8 @@ public class CommandPet implements CommandExecutor {
                     if (Main.getInstance().hasPet(player)) {
                         Main.getInstance().spawnPetHere(player);
                     }
+
+
                 return true;
             case "away":
                 if (hasPermission(player, Permissions.COMMAND_AWAY))
@@ -111,7 +122,7 @@ public class CommandPet implements CommandExecutor {
     }
 
     /**
-     * List arguments of command and credits
+     * List arguments
      *
      * @param commandSender - Who receives the message
      */
@@ -119,7 +130,6 @@ public class CommandPet implements CommandExecutor {
         for (String loopMessages : getConfig().getStringList("list-commands")) {
             commandSender.sendMessage(format(loopMessages));
         }
-        commandSender.sendMessage(ChatColor.DARK_AQUA+"Plugin developed by "+ChatColor.AQUA+"@Niketion");
     }
 
     /**

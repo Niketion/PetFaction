@@ -2,12 +2,14 @@
 # Github: github.com/Niketion/PetFaction
 faction-depend: true
 list-commands:
+ - '&7&m+--------------------------------------------------+'
  - '&a/pet gui &7- Open gui'
  - '&a/pet shop &7- Open shop'
  - '&a/pet here &7- Teletransport the pet into your position'
  - '&a/pet change &7- Change your pet'
  - '&a/pet name &7- Change name'
  - '&a/pet away &7- Despawn pet'
+ - '&7&m+--------------------------------------------------+'
 arguments-not-found: '&cArguments not found...'
 duration-potion-pet: 10 #minutes
 vip-pet: "&eBuy vip to buy this pet!"
